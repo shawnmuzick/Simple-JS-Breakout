@@ -39,19 +39,28 @@ let player = new Player({
 });
 let board = new Board({ width: canvasWidth, height: canvasHeight * (3 / 4), tiles, ctx });
 let ball = new Ball({ x: centerX, y: centerY, radius: 5 });
+let game = { state: true };
 
 function clear() {
 	ctx.clearRect(0, 0, canvasWidth, canvasHeight);
 }
-
+function gameOver() {
+	return;
+}
 function paint() {
 	clear();
 	fix_dpi();
 	board.draw();
 	player.draw(ctx);
 	player.move(canvas);
-	ball.draw(canvasHeight, canvasWidth, ctx, board, player);
-	requestAnimationFrame(paint);
+	ball.draw(canvasHeight, canvasWidth, ctx, board, player, game);
+	if (!game.state) {
+		//clear();
+		ctx.fillText('Game Over', centerX, centerY);
+		requestAnimationFrame(gameOver);
+	} else {
+		requestAnimationFrame(paint);
+	}
 }
 
 function keyDown(e) {

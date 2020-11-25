@@ -1,7 +1,3 @@
-function gameOver() {
-	console.log('you lose!');
-}
-
 export class Player {
 	constructor({ speed, width, height, dx, x, y }) {
 		this.speed = speed;
@@ -90,7 +86,7 @@ export class Ball {
 		this.dy = 5;
 	}
 
-	draw(canvasHeight, canvasWidth, ctx, board, player) {
+	draw(canvasHeight, canvasWidth, ctx, board, player, game) {
 		ctx.beginPath();
 		ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
 		ctx.fillStyle = 'green';
@@ -98,12 +94,12 @@ export class Ball {
 
 		this.x += this.dx;
 		this.y += this.dy;
-		this.checkWallCollision(canvasHeight, canvasWidth);
+		this.checkWallCollision(canvasHeight, canvasWidth, game);
 		this.checkBrickCollision(board.tiles);
 		this.checkPlayerCollision(player);
 	}
 
-	checkWallCollision(canvasHeight, canvasWidth) {
+	checkWallCollision(canvasHeight, canvasWidth, game) {
 		if (this.x + this.radius >= canvasWidth || this.x - this.radius <= 0) {
 			this.dx *= -1;
 		}
@@ -111,7 +107,8 @@ export class Ball {
 			this.dy *= -1;
 		}
 		if (this.y + this.radius > canvasHeight) {
-			gameOver();
+			console.log;
+			game.state = false;
 		}
 	}
 
