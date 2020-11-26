@@ -1,24 +1,12 @@
 import { Player, Board, Ball } from './classes.js';
-const canvas = document.createElement('canvas');
-canvas.setAttribute('id', 'canvas');
-canvas.style.width = '100%';
-canvas.style.height = '100%';
-
-let dpi = window.devicePixelRatio;
-function fix_dpi() {
-	let style_height = +getComputedStyle(canvas).getPropertyValue('height').slice(0, -2);
-	let style_width = +getComputedStyle(canvas).getPropertyValue('width').slice(0, -2);
-	canvas.setAttribute('height', style_height * dpi);
-	canvas.setAttribute('width', style_width * dpi);
-}
-document.body.appendChild(canvas);
-
-const ctx = canvas.getContext('2d');
-
+import { fix_dpi, initCanvas } from './util.js';
+let canvas = initCanvas();
 const canvasWidth = +getComputedStyle(canvas).getPropertyValue('width').slice(0, -2);
 const canvasHeight = +getComputedStyle(canvas).getPropertyValue('height').slice(0, -2);
 const centerX = canvasWidth / 2;
 const centerY = canvasHeight / 2;
+const ctx = canvas.getContext('2d');
+
 const tiles = [
 	[{ on: true }, { on: true }, { on: true }, { on: true }, { on: true }],
 	[{ on: true }, { on: true }, { on: true }, { on: true }, { on: true }],
@@ -26,40 +14,53 @@ const tiles = [
 	[{ on: true }, { on: true }, { on: true }, { on: true }, { on: true }],
 	[{ on: true }, { on: true }, { on: true }, { on: true }, { on: true }],
 	[{ on: true }, { on: true }, { on: true }, { on: true }, { on: true }],
-	[{ on: true }, { on: true }, { on: true }, { on: true }, { on: true }],
-	[{ on: true }, { on: true }, { on: true }, { on: true }, { on: true }],
 ];
+
 let player = new Player({
-	speed: 10,
+	speed: 5,
 	width: 100,
 	height: 10,
 	dx: 0,
 	x: centerX,
-	y: canvasHeight - 10,
+	canvasHeight: canvasHeight,
 });
-let board = new Board({ width: canvasWidth, height: canvasHeight * (3 / 4), tiles, ctx });
+
+let board = new Board({ width: canvasWidth, height: canvasHeight, tiles: tiles, ctx: ctx });
+
 let ball = new Ball({ x: centerX, y: centerY, radius: 5 });
+
 let game = { state: true };
 
-function clear() {
+function clear(ctx) {
 	ctx.clearRect(0, 0, canvasWidth, canvasHeight);
 }
+
 function gameOver() {
 	return;
 }
+
 function paint() {
-	clear();
-	fix_dpi();
-	board.draw();
-	player.draw(ctx);
-	player.move(canvas);
-	ball.draw(canvasHeight, canvasWidth, ctx, board, player, game);
-	if (!game.state) {
-		//clear();
+	if (game.state) {
+		clear(ctx);
+		fix_dpi(canvas);
+		board.draw();
+		player.draw(ctx);
+		player.move(canvas);
+		ball.draw(canvasHeight, canvasWidth, ctx, board, player, game);
+		requestAnimationFrame(paint);
+	}
+	if (!game.state && winCondition) {
 		ctx.fillText('Game Over', centerX, centerY);
 		requestAnimationFrame(gameOver);
-	} else {
-		requestAnimationFrame(paint);
+	}
+	if (board.winCondition === 0) {
+		game.state = false;
+		clear(ctx);
+		fix_dpi(canvas);
+		board.draw();
+		player.draw(ctx);
+		ctx.fillText('You Win', centerX, centerY);
+		requestAnimationFrame(gameOver);
 	}
 }
 

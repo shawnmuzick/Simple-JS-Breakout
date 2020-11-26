@@ -1,11 +1,11 @@
 export class Player {
-	constructor({ speed, width, height, dx, x, y }) {
+	constructor({ speed, width, height, dx, x, canvasHeight }) {
 		this.speed = speed;
 		this.width = width;
 		this.height = height;
 		this.dx = dx;
 		this.x = x;
-		this.y = y;
+		this.y = canvasHeight - height;
 	}
 
 	left() {
@@ -60,6 +60,7 @@ export class Board {
 		this.height = height;
 		this.tiles = tiles || [];
 		this.ctx = ctx;
+		this.winCondition = tiles.length * tiles[0].length;
 	}
 
 	draw() {
@@ -83,7 +84,7 @@ export class Ball {
 		this.y = y;
 		this.radius = radius;
 		this.dx = 0;
-		this.dy = 5;
+		this.dy = 2;
 	}
 
 	draw(canvasHeight, canvasWidth, ctx, board, player, game) {
@@ -95,7 +96,7 @@ export class Ball {
 		this.x += this.dx;
 		this.y += this.dy;
 		this.checkWallCollision(canvasHeight, canvasWidth, game);
-		this.checkBrickCollision(board.tiles);
+		this.checkBrickCollision(board);
 		this.checkPlayerCollision(player);
 	}
 
@@ -112,7 +113,8 @@ export class Ball {
 		}
 	}
 
-	checkBrickCollision(grid) {
+	checkBrickCollision(board) {
+		let grid = board.tiles;
 		for (let i = 0; i < grid.length; i++) {
 			for (let j = 0; j < grid[i].length; j++) {
 				let item = grid[i][j];
@@ -124,8 +126,12 @@ export class Ball {
 						this.x + this.radius > item.x &&
 						this.x + this.radius < item.x + item.width
 					) {
-						item.on ? (this.dy *= -1) : (this.dy = this.dy);
-						item.on = false;
+						if (item.on) {
+							this.dy *= -1;
+							item.on = false;
+							board.winCondition--;
+							console.log(board.winCondition);
+						}
 					}
 				}
 			}
