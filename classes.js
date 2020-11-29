@@ -84,7 +84,7 @@ export class Ball {
 		this.y = y;
 		this.radius = radius;
 		this.dx = 0;
-		this.dy = 2;
+		this.dy = 5;
 	}
 
 	draw(canvasHeight, canvasWidth, ctx, board, player, game) {
@@ -145,7 +145,17 @@ export class Ball {
 				this.x + this.radius <= player.x + player.width / 2
 			) {
 				this.dy *= -1;
-				this.dx = player.dx;
+				if (this.x < player.x) {
+					this.dx =
+						this.dx / 2 -
+						(player.x - (player.x - player.width / 2)) / 10;
+				} else if (this.x > player.x) {
+					this.dx =
+						this.dx / 2 +
+						(player.x - (player.x - player.width / 2)) / 10;
+				} else {
+					this.dx = player.dx;
+				}
 			}
 		}
 	}

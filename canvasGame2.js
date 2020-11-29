@@ -14,6 +14,12 @@ const tiles = [
 	[{ on: true }, { on: true }, { on: true }, { on: true }, { on: true }],
 	[{ on: true }, { on: true }, { on: true }, { on: true }, { on: true }],
 	[{ on: true }, { on: true }, { on: true }, { on: true }, { on: true }],
+	[{ on: true }, { on: true }, { on: true }, { on: true }, { on: true }],
+	[{ on: true }, { on: true }, { on: true }, { on: true }, { on: true }],
+	[{ on: true }, { on: true }, { on: true }, { on: true }, { on: true }],
+	[{ on: true }, { on: true }, { on: true }, { on: true }, { on: true }],
+	[{ on: true }, { on: true }, { on: true }, { on: true }, { on: true }],
+	[{ on: true }, { on: true }, { on: true }, { on: true }, { on: true }],
 ];
 
 let player = new Player({
@@ -49,7 +55,7 @@ function paint() {
 		ball.draw(canvasHeight, canvasWidth, ctx, board, player, game);
 		requestAnimationFrame(paint);
 	}
-	if (!game.state && winCondition) {
+	if (!game.state && board.winCondition) {
 		ctx.fillText('Game Over', centerX, centerY);
 		requestAnimationFrame(gameOver);
 	}
@@ -75,9 +81,15 @@ function keyDown(e) {
 			break;
 		default:
 			fn = () => {};
+			break;
 	}
 	fn();
+}
+function keyUp(e) {
+	player.dx = 0;
 }
 
 paint();
 document.addEventListener('keydown', keyDown);
+
+document.addEventListener('keyup', keyUp);
