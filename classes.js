@@ -55,17 +55,28 @@ export class Brick {
 	}
 }
 export class Board {
-	constructor({ width, height, tiles, ctx }) {
+	constructor({ width, height, rows, ctx }) {
 		this.width = width;
 		this.height = height;
-		this.tiles = tiles || [];
+		this.tiles = [];
 		this.ctx = ctx;
-		this.winCondition = tiles.length * tiles[0].length;
+		this.winCondition = 0;
+		this.rows = rows;
+	}
+
+	buildTiles() {
+		for (let i = 0; i < this.rows; i++) {
+			this.tiles[i] = [];
+			for (let j = 0; j < 10; j++) {
+				this.tiles[i][j] = { on: true };
+			}
+		}
+		this.winCondition = this.tiles.length * this.tiles[0].length;
 	}
 
 	draw() {
 		for (let i = 0; i < this.tiles.length; i++) {
-			for (let j = 0; j < this.tiles[i].length; j++) {
+			for (let j = 0; j < this.tiles[0].length; j++) {
 				this.tiles[i][j] = new Brick({
 					x: j,
 					y: i,
@@ -108,7 +119,6 @@ export class Ball {
 			this.dy *= -1;
 		}
 		if (this.y + this.radius > canvasHeight) {
-			console.log;
 			game.state = false;
 		}
 	}
@@ -130,7 +140,6 @@ export class Ball {
 							this.dy *= -1;
 							item.on = false;
 							board.winCondition--;
-							console.log(board.winCondition);
 						}
 					}
 				}

@@ -6,22 +6,7 @@ const canvasHeight = +getComputedStyle(canvas).getPropertyValue('height').slice(
 const centerX = canvasWidth / 2;
 const centerY = canvasHeight / 2;
 const ctx = canvas.getContext('2d');
-
-const tiles = [
-	[{ on: true }, { on: true }, { on: true }, { on: true }, { on: true }],
-	[{ on: true }, { on: true }, { on: true }, { on: true }, { on: true }],
-	[{ on: true }, { on: true }, { on: true }, { on: true }, { on: true }],
-	[{ on: true }, { on: true }, { on: true }, { on: true }, { on: true }],
-	[{ on: true }, { on: true }, { on: true }, { on: true }, { on: true }],
-	[{ on: true }, { on: true }, { on: true }, { on: true }, { on: true }],
-	[{ on: true }, { on: true }, { on: true }, { on: true }, { on: true }],
-	[{ on: true }, { on: true }, { on: true }, { on: true }, { on: true }],
-	[{ on: true }, { on: true }, { on: true }, { on: true }, { on: true }],
-	[{ on: true }, { on: true }, { on: true }, { on: true }, { on: true }],
-	[{ on: true }, { on: true }, { on: true }, { on: true }, { on: true }],
-	[{ on: true }, { on: true }, { on: true }, { on: true }, { on: true }],
-];
-
+let gameLevel = 3;
 let player = new Player({
 	speed: 5,
 	width: 100,
@@ -31,7 +16,8 @@ let player = new Player({
 	canvasHeight: canvasHeight,
 });
 
-let board = new Board({ width: canvasWidth, height: canvasHeight, tiles: tiles, ctx: ctx });
+let board = new Board({ width: canvasWidth, height: canvasHeight, rows: gameLevel, ctx: ctx });
+board.buildTiles();
 
 let ball = new Ball({ x: centerX, y: centerY, radius: 5 });
 
@@ -53,21 +39,33 @@ function paint() {
 		player.draw(ctx);
 		player.move(canvas);
 		ball.draw(canvasHeight, canvasWidth, ctx, board, player, game);
-		requestAnimationFrame(paint);
 	}
-	if (!game.state && board.winCondition) {
+	if (!game.state) {
 		ctx.fillText('Game Over', centerX, centerY);
 		requestAnimationFrame(gameOver);
+		return;
 	}
 	if (board.winCondition === 0) {
-		game.state = false;
-		clear(ctx);
-		fix_dpi(canvas);
-		board.draw();
-		player.draw(ctx);
-		ctx.fillText('You Win', centerX, centerY);
-		requestAnimationFrame(gameOver);
+		gameLevel++;
+
+		player = new Player({
+			speed: 5,
+			width: 100,
+			height: 10,
+			dx: 0,
+			x: centerX,
+			canvasHeight: canvasHeight,
+		});
+		ball = new Ball({ x: centerX, y: centerY, radius: 5 });
+		board = new Board({
+			width: canvasWidth,
+			height: canvasHeight,
+			rows: gameLevel++,
+			ctx: ctx,
+		});
+		board.buildTiles();
 	}
+	requestAnimationFrame(paint);
 }
 
 function keyDown(e) {
