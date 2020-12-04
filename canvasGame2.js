@@ -5,65 +5,68 @@ const canvasWidth = +getComputedStyle(canvas).getPropertyValue('width').slice(0,
 const canvasHeight = +getComputedStyle(canvas).getPropertyValue('height').slice(0, -2);
 const centerX = canvasWidth / 2;
 const centerY = canvasHeight / 2;
-const ctx = canvas.getContext('2d');
-let gameLevel = 3;
-let player = new Player({
-	speed: 5,
-	width: 100,
-	height: 10,
-	dx: 0,
-	x: centerX,
-	canvasHeight: canvasHeight,
-});
+let ctx = canvas.getContext('2d');
+let board,
+	ball,
+	player,
+	game = { state: false, level: 3 };
 
-let board = new Board({ width: canvasWidth, height: canvasHeight, rows: gameLevel, ctx: ctx });
-board.buildTiles();
+function drawActors() {
+	board.draw();
+	player.draw(ctx);
+	ball.draw(canvasHeight, canvasWidth, ctx, board, player, game);
+}
 
-let ball = new Ball({ x: centerX, y: centerY, radius: 5 });
+function drawMessage(message) {
+	ctx.font = '50px serif';
+	ctx.textAlign = 'center';
+	ctx.fillText(message, centerX, centerY);
+}
 
-let game = { state: true };
+function animate() {
+	clear(ctx);
+	fix_dpi(canvas);
+	drawActors();
+}
+
+function init() {
+	board = new Board({ width: canvasWidth, height: canvasHeight, rows: game.level, ctx: ctx });
+	board.buildTiles();
+
+	ball = new Ball({ x: centerX, y: centerY, radius: 5 });
+
+	game.state = false;
+	player = new Player({
+		speed: 8,
+		width: 100,
+		height: 10,
+		dx: 0,
+		x: centerX,
+		canvasHeight: canvasHeight,
+	});
+	animate();
+	drawMessage('Press space to play');
+	game.state = true;
+}
+init();
 
 function clear(ctx) {
 	ctx.clearRect(0, 0, canvasWidth, canvasHeight);
 }
 
-function gameOver() {
-	return;
-}
-
 function paint() {
-	if (game.state) {
-		clear(ctx);
-		fix_dpi(canvas);
-		board.draw();
-		player.draw(ctx);
-		player.move(canvas);
-		ball.draw(canvasHeight, canvasWidth, ctx, board, player, game);
-	}
 	if (!game.state) {
-		ctx.fillText('Game Over', centerX, centerY);
-		requestAnimationFrame(gameOver);
+		drawMessage('Game Over, press space to play again');
 		return;
+	} else {
+		animate();
+		player.move(canvas);
 	}
 	if (board.winCondition === 0) {
-		gameLevel++;
-
-		player = new Player({
-			speed: 5,
-			width: 100,
-			height: 10,
-			dx: 0,
-			x: centerX,
-			canvasHeight: canvasHeight,
-		});
-		ball = new Ball({ x: centerX, y: centerY, radius: 5 });
-		board = new Board({
-			width: canvasWidth,
-			height: canvasHeight,
-			rows: gameLevel++,
-			ctx: ctx,
-		});
-		board.buildTiles();
+		animate();
+		game.level++;
+		drawMessage(`Level ${game.level - 2} - Press Space to begin`);
+		return;
 	}
 	requestAnimationFrame(paint);
 }
@@ -77,17 +80,21 @@ function keyDown(e) {
 		case 'ArrowLeft':
 			fn = player.left();
 			break;
+		case ' ':
+			init();
+			fn = paint();
 		default:
 			fn = () => {};
 			break;
 	}
 	fn();
 }
+
 function keyUp(e) {
 	player.dx = 0;
+	return;
 }
 
-paint();
 document.addEventListener('keydown', keyDown);
 
 document.addEventListener('keyup', keyUp);
