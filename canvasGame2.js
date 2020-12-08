@@ -34,7 +34,7 @@ function init(override) {
 	board = new Board({ width: canvasWidth, height: canvasHeight, rows: game.level, ctx: ctx });
 	board.buildTiles();
 
-	ball = new Ball({ x: centerX, y: centerY, radius: 5 });
+	ball = new Ball({ x: centerX, y: centerY + 20, radius: 5 });
 
 	game.state = false;
 	player = new Player({
@@ -46,7 +46,7 @@ function init(override) {
 		canvasHeight: canvasHeight,
 	});
 	animate();
-	drawMessage('Press space to play');
+	drawMessage('Press space or click to play');
 	override === false ? (game.state = override) : (game.state = true);
 }
 init(false);
@@ -57,7 +57,7 @@ function clear(ctx) {
 
 function paint() {
 	if (!game.state) {
-		drawMessage('Game Over, press space to play again');
+		drawMessage('Game Over, press space or click to play again');
 		return;
 	} else {
 		animate();
