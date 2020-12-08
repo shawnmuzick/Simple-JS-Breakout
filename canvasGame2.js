@@ -6,6 +6,7 @@ const canvasHeight = +getComputedStyle(canvas).getPropertyValue('height').slice(
 const centerX = canvasWidth / 2;
 const centerY = canvasHeight / 2;
 let ctx = canvas.getContext('2d');
+let mouseX = 0;
 let board,
 	ball,
 	player,
@@ -29,7 +30,7 @@ function animate() {
 	drawActors();
 }
 
-function init() {
+function init(override) {
 	board = new Board({ width: canvasWidth, height: canvasHeight, rows: game.level, ctx: ctx });
 	board.buildTiles();
 
@@ -46,9 +47,9 @@ function init() {
 	});
 	animate();
 	drawMessage('Press space to play');
-	game.state = true;
+	override === false ? (game.state = override) : (game.state = true);
 }
-init();
+init(false);
 
 function clear(ctx) {
 	ctx.clearRect(0, 0, canvasWidth, canvasHeight);
@@ -65,6 +66,7 @@ function paint() {
 	if (board.winCondition === 0) {
 		animate();
 		game.level++;
+		game.state = false;
 		drawMessage(`Level ${game.level - 2} - Press Space to begin`);
 		return;
 	}
@@ -72,22 +74,21 @@ function paint() {
 }
 
 function keyDown(e) {
-	let fn = null;
-	switch (e.key) {
-		case 'ArrowRight':
-			fn = player.right();
-			break;
-		case 'ArrowLeft':
-			fn = player.left();
-			break;
-		case ' ':
-			init();
-			fn = paint();
-		default:
-			fn = () => {};
-			break;
+	if (e.key === ' ' && game.state) {
+		console.log(game.state);
+		console.log('test');
+		return;
 	}
-	fn();
+	let obj = {
+		ArrowRight: player.right(),
+		ArrowLeft: player.left(),
+		' ': () => {
+			init();
+			paint();
+		},
+	};
+	obj[e.key]();
+	return;
 }
 
 function keyUp(e) {
@@ -95,6 +96,13 @@ function keyUp(e) {
 	return;
 }
 
-document.addEventListener('keydown', keyDown);
+function mouseMove(e) {
+	if (e.clientX > mouseX) keyDown({ key: 'ArrowRight' });
+	if (e.clientX < mouseX) keyDown({ key: 'ArrowLeft' });
+	mouseX = e.clientX;
+}
 
+document.addEventListener('keydown', keyDown);
 document.addEventListener('keyup', keyUp);
+document.addEventListener('mousemove', mouseMove);
+document.addEventListener('click', (e) => keyDown({ key: ' ' }));
