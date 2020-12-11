@@ -67,7 +67,7 @@ export class Board {
 	buildTiles() {
 		for (let i = 0; i < this.rows; i++) {
 			this.tiles[i] = [];
-			for (let j = 0; j < 1; j++) {
+			for (let j = 0; j < 10; j++) {
 				this.tiles[i][j] = { on: true };
 			}
 		}
