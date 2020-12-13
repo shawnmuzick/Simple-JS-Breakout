@@ -1,6 +1,7 @@
 import { Player, Board, Ball } from './classes.js';
 import { fix_dpi, initCanvas } from './util.js';
 let canvas = initCanvas();
+let score = document.getElementById('score');
 const canvasWidth = +getComputedStyle(canvas).getPropertyValue('width').slice(0, -2);
 const canvasHeight = +getComputedStyle(canvas).getPropertyValue('height').slice(0, -2);
 const centerX = canvasWidth / 2;
@@ -10,12 +11,13 @@ let mouseX = 0;
 let board,
 	ball,
 	player,
-	game = { state: false, level: 3 };
+	game = { state: false, level: 3, score: 0 };
 
 function drawActors() {
 	board.draw();
 	player.draw(ctx);
 	ball.draw(canvasHeight, canvasWidth, ctx, board, player, game);
+	score.innerText = `Your Score: ${game.score}`;
 }
 
 function drawMessage(message) {
@@ -48,6 +50,7 @@ function init(override) {
 	animate();
 	drawMessage('Press space or click to play');
 	override === false ? (game.state = override) : (game.state = true);
+	score.innerText = `Your Score: ${game.score}`;
 }
 init(false);
 
@@ -58,6 +61,8 @@ function clear(ctx) {
 function paint() {
 	if (!game.state) {
 		drawMessage('Game Over, press space or click to play again');
+		game.score = 0;
+		game.level = 3;
 		return;
 	} else {
 		animate();

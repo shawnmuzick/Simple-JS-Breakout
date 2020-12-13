@@ -67,7 +67,7 @@ export class Board {
 	buildTiles() {
 		for (let i = 0; i < this.rows; i++) {
 			this.tiles[i] = [];
-			for (let j = 0; j < 10; j++) {
+			for (let j = 0; j < 1; j++) {
 				this.tiles[i][j] = { on: true };
 			}
 		}
@@ -107,7 +107,7 @@ export class Ball {
 		this.x += this.dx;
 		this.y += this.dy;
 		this.checkWallCollision(canvasHeight, canvasWidth, game);
-		this.checkBrickCollision(board);
+		this.checkBrickCollision(board, game);
 		this.checkPlayerCollision(player);
 	}
 
@@ -123,7 +123,7 @@ export class Ball {
 		}
 	}
 
-	checkBrickCollision(board) {
+	checkBrickCollision(board, game) {
 		let grid = board.tiles;
 		for (let i = 0; i < grid.length; i++) {
 			for (let j = 0; j < grid[i].length; j++) {
@@ -140,6 +140,7 @@ export class Ball {
 							this.dy *= -1;
 							item.on = false;
 							board.winCondition--;
+							game.score++;
 						}
 					}
 				}
