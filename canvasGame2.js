@@ -1,7 +1,13 @@
 import { Player, Board, Ball } from './classes.js';
 import { fix_dpi, initCanvas } from './util.js';
 let canvas = initCanvas();
-let score = document.getElementById('score');
+let scoreCard = document.createElement('div');
+scoreCard.classList.add('scoreCard');
+let score = document.createElement('p');
+score.classList.add('score');
+scoreCard.appendChild(score);
+document.body.appendChild(scoreCard);
+
 const canvasWidth = +getComputedStyle(canvas).getPropertyValue('width').slice(0, -2);
 const canvasHeight = +getComputedStyle(canvas).getPropertyValue('height').slice(0, -2);
 const centerX = canvasWidth / 2;
