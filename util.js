@@ -15,7 +15,7 @@ export function initCanvas() {
 	return canvas;
 }
 export function initScoreBoard(scoreBoard, arr) {
-	for (let i = arr.length - 1; i > 0; i--) {
+	for (let i = arr.length - 1; i >= 0; i--) {
 		let item = document.createElement('div');
 		let score = document.createElement('p');
 		let initials = document.createElement('p');
@@ -39,13 +39,14 @@ export function initScoreCard() {
 	return score;
 }
 export function checkLeaderBoard(score, arr) {
-	for (let i = 0; i < arr.length; i++) {
-		if (score > arr[i].score && score < arr[i + 1].score) {
+	for (let i = arr.length - 1; i >= 0; i--) {
+		if (score > arr[i].score) {
 			let initials = window.prompt(
 				'congratulations, you made the leaderboard! Enter your initials'
 			);
-			arr.splice(i, 0, { score: score, initials: initials });
+			arr.splice(i + 1, 0, { score: score, initials: initials });
 			arr.shift();
+			break;
 		}
 	}
 	return arr;

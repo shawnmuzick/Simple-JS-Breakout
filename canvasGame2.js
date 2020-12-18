@@ -3,11 +3,11 @@ import { fix_dpi, initCanvas, initScoreCard, initScoreBoard, checkLeaderBoard } 
 let canvas = initCanvas();
 let score = initScoreCard();
 let leaderBoard = [
-	{ score: 10, initials: 'ABC' },
-	{ score: 20, initials: 'BCD' },
-	{ score: 30, initials: 'CDE' },
-	{ score: 40, initials: 'DEF' },
-	{ score: 50, initials: 'EFG' },
+	{ score: 0, initials: 'ABC' },
+	{ score: 1, initials: 'BCD' },
+	{ score: 2, initials: 'CDE' },
+	{ score: 3, initials: 'DEF' },
+	{ score: 4, initials: 'EFG' },
 ];
 
 let scoreBoard = document.createElement('div');
@@ -77,6 +77,7 @@ function paint() {
 		drawMessage('Game Over, press space or click to play again');
 		leaderBoard = checkLeaderBoard(game.score, leaderBoard);
 		scoreBoard.innerHTML = '';
+		console.log(leaderBoard);
 		initScoreBoard(scoreBoard, leaderBoard);
 		game.score = 0;
 		game.level = 3;
