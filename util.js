@@ -14,3 +14,39 @@ export function initCanvas() {
 	document.body.appendChild(canvas);
 	return canvas;
 }
+export function initScoreBoard(scoreBoard, arr) {
+	for (let i = arr.length - 1; i > 0; i--) {
+		let item = document.createElement('div');
+		let score = document.createElement('p');
+		let initials = document.createElement('p');
+		score.innerText = arr[i].score;
+		initials.innerText = arr[i].initials;
+		item.appendChild(score);
+		item.appendChild(initials);
+		item.id = `${arr[i].score}-${arr[i].initials}`;
+		scoreBoard.appendChild(item);
+	}
+	document.body.appendChild(scoreBoard);
+}
+
+export function initScoreCard() {
+	let scoreCard = document.createElement('div');
+	scoreCard.classList.add('scoreCard');
+	let score = document.createElement('p');
+	score.classList.add('score');
+	scoreCard.appendChild(score);
+	document.body.appendChild(scoreCard);
+	return score;
+}
+export function checkLeaderBoard(score, arr) {
+	for (let i = 0; i < arr.length; i++) {
+		if (score > arr[i].score && score < arr[i + 1].score) {
+			let initials = window.prompt(
+				'congratulations, you made the leaderboard! Enter your initials'
+			);
+			arr.splice(i, 0, { score: score, initials: initials });
+			arr.shift();
+		}
+	}
+	return arr;
+}

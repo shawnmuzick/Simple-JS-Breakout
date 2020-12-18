@@ -1,17 +1,25 @@
 import { Player, Board, Ball } from './classes.js';
-import { fix_dpi, initCanvas } from './util.js';
+import { fix_dpi, initCanvas, initScoreCard, initScoreBoard, checkLeaderBoard } from './util.js';
 let canvas = initCanvas();
-let scoreCard = document.createElement('div');
-scoreCard.classList.add('scoreCard');
-let score = document.createElement('p');
-score.classList.add('score');
-scoreCard.appendChild(score);
-document.body.appendChild(scoreCard);
+let score = initScoreCard();
+let leaderBoard = [
+	{ score: 10, initials: 'ABC' },
+	{ score: 20, initials: 'BCD' },
+	{ score: 30, initials: 'CDE' },
+	{ score: 40, initials: 'DEF' },
+	{ score: 50, initials: 'EFG' },
+];
+
+let scoreBoard = document.createElement('div');
+scoreBoard.classList.add('scoreBoard');
+scoreBoard.id = 'scoreBoard';
+initScoreBoard(scoreBoard, leaderBoard);
 
 const canvasWidth = +getComputedStyle(canvas).getPropertyValue('width').slice(0, -2);
 const canvasHeight = +getComputedStyle(canvas).getPropertyValue('height').slice(0, -2);
 const centerX = canvasWidth / 2;
 const centerY = canvasHeight / 2;
+
 let ctx = canvas.getContext('2d');
 let mouseX = 0;
 let board,
@@ -67,6 +75,9 @@ function clear(ctx) {
 function paint() {
 	if (!game.state) {
 		drawMessage('Game Over, press space or click to play again');
+		leaderBoard = checkLeaderBoard(game.score, leaderBoard);
+		scoreBoard.innerHTML = '';
+		initScoreBoard(scoreBoard, leaderBoard);
 		game.score = 0;
 		game.level = 3;
 		return;
@@ -86,8 +97,6 @@ function paint() {
 
 function keyDown(e) {
 	if (e.key === ' ' && game.state) {
-		console.log(game.state);
-		console.log('test');
 		return;
 	}
 	let obj = {
@@ -106,6 +115,7 @@ function keyUp(e) {
 	player.dx = 0;
 	return;
 }
+/*  enable for mouse support
 
 function mouseMove(e) {
 	if (e.clientX > mouseX) keyDown({ key: 'ArrowRight' });
@@ -113,7 +123,9 @@ function mouseMove(e) {
 	mouseX = e.clientX;
 }
 
+*/
+
 document.addEventListener('keydown', keyDown);
 document.addEventListener('keyup', keyUp);
-document.addEventListener('mousemove', mouseMove);
+// document.addEventListener('mousemove', mouseMove);
 document.addEventListener('click', (e) => keyDown({ key: ' ' }));
